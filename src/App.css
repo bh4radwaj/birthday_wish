@@ -1,0 +1,223 @@
+:root {
+  --mx: 50%;
+  --my: 50%;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #05060c;
+  overflow: hidden;
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+.scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 30%, #0b0f1e 0%, #05060c 55%, #020207 100%);
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---------------- Aurora background ---------------- */
+.aurora {
+  filter: blur(70px) saturate(140%);
+  mix-blend-mode: screen;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.aurora-blob {
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  max-width: 900px;
+  max-height: 900px;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.a1 {
+  top: -15%;
+  left: -10%;
+  background: radial-gradient(circle at 30% 30%, #3ee8c5, transparent 65%);
+  animation: drift1 22s ease-in-out infinite;
+}
+
+.a2 {
+  top: 10%;
+  right: -15%;
+  background: radial-gradient(circle at 60% 40%, #8b5cf6, transparent 65%);
+  animation: drift2 26s ease-in-out infinite;
+}
+
+.a3 {
+  bottom: -25%;
+  left: 25%;
+  background: radial-gradient(circle at 50% 50%, #ff6fae, transparent 65%);
+  animation: drift3 30s ease-in-out infinite;
+}
+
+@keyframes drift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6vw, 8vh) scale(1.15); }
+}
+@keyframes drift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-8vw, 6vh) scale(1.1); }
+}
+@keyframes drift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(4vw, -6vh) scale(1.2); }
+}
+
+/* ---------------- Starfield / particle canvases ---------------- */
+.starfield-canvas {
+  z-index: 1;
+}
+
+.particle-canvas {
+  z-index: 3;
+  transition: opacity 0.9s ease;
+}
+
+/* ---------------- Mouse-reactive lighting ---------------- */
+.mouse-light {
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--mx) var(--my),
+    rgba(160, 200, 255, 0.16),
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  transition: background 0.05s linear;
+}
+
+/* ---------------- Text stage ---------------- */
+.text-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5vw;
+  pointer-events: none;
+}
+
+.glass-text {
+  position: relative;
+  margin: 0;
+  text-align: center;
+  font-weight: 900;
+  font-size: clamp(1.9rem, 9.5vw, 6.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  white-space: normal;
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+}
+
+.glass-text.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.glass-text__fill {
+  display: block;
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #cfe0ff 28%,
+    #8fa6d6 48%,
+    #eef4ff 62%,
+    #b7c6ec 80%,
+    #ffffff 100%
+  );
+  background-size: 100% 220%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px rgba(140, 180, 255, 0.35))
+    drop-shadow(0 0 42px rgba(140, 100, 255, 0.25));
+  animation: chromeShift 9s ease-in-out infinite;
+}
+
+.glass-text.is-settled .glass-text__fill {
+  animation: chromeShift 9s ease-in-out infinite, breathe 5.5s ease-in-out infinite;
+}
+
+@keyframes chromeShift {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 0% 100%; }
+}
+
+@keyframes breathe {
+  0%, 100% { filter: drop-shadow(0 0 18px rgba(140, 180, 255, 0.35)) drop-shadow(0 0 42px rgba(140, 100, 255, 0.25)); }
+  50% { filter: drop-shadow(0 0 26px rgba(160, 200, 255, 0.5)) drop-shadow(0 0 58px rgba(160, 120, 255, 0.35)); }
+}
+
+/* Moving specular shine tied to the cursor, clipped to the text shape */
+.glass-text__shine {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: radial-gradient(
+    260px circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.15) 40%,
+    transparent 70%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  mix-blend-mode: overlay;
+  opacity: 0.9;
+}
+
+/* ---------------- Vignette ---------------- */
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 520px) {
+  .glass-text {
+    font-size: clamp(1.6rem, 10.5vw, 3rem);
+  }
+  .aurora-blob {
+    width: 90vw;
+    height: 90vw;
+  }
+}
+
+/* ---------------- Reduced motion ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .aurora-blob { animation: none; }
+  .glass-text__fill { animation: none; }
+  .glass-text {
+    transition: opacity 0.6s ease;
+    transform: none;
+  }
+}
