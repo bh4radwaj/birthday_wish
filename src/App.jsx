@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 
-const TEXT = 'Happy Birthday Sou'
+const TEXT = 'Happy Birthday'
 
 /* ------------------------------------------------------------------ */
 /*  Utility: seeded-ish random helpers                                 */
